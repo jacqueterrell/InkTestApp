@@ -1,0 +1,25 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+android {
+    namespace 'com.myscript.iink.uireferenceimplementation'
+
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 35
+        versionCode 4100
+        versionName '4.1.0'
+
+        vectorDrawables.useSupportLibrary true
+    }
+}
+
+dependencies {
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "com.google.code.gson:gson:2.11.0"
+    api "com.myscript:iink:4.1.0"
+}
