@@ -13,7 +13,7 @@ class AppApplication: Application() {
 
         private var engine: Engine? = null
 
-        public fun getEngine(): Engine {
+        fun getEngine(): Engine {
             if (engine == null) {
                 engine = Engine.create(MyCertificate.getBytes())
             }

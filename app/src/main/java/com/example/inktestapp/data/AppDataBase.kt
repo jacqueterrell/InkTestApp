@@ -15,6 +15,7 @@ abstract class AppDataBase: RoomDatabase() {
         private var INSTANCE: AppDataBase? = null
         fun getInstance(context: Context): AppDataBase {
         var instance = INSTANCE
+
             if (instance == null) {
                 instance = Room.databaseBuilder(
                     context.applicationContext,
