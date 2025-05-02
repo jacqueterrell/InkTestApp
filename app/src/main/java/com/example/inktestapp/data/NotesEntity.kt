@@ -9,5 +9,6 @@ data class NotesEntity (
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0,
     var title: String = "",
-    var message: String = ""
+    var message: String = "",
+    var fileName: String= ""
 )

@@ -1,6 +1,7 @@
 package com.example.inktestapp.userInterface
 
 import android.app.Application
+import android.util.Log
 import com.example.inktestapp.certificate.MyCertificate
 import com.example.inktestapp.di.Modules
 import com.myscript.iink.Engine
@@ -15,7 +16,11 @@ class AppApplication: Application() {
 
         fun getEngine(): Engine {
             if (engine == null) {
-                engine = Engine.create(MyCertificate.getBytes())
+                engine = Engine.create(MyCertificate.getBytes()).apply {
+                    configuration.let {
+
+                    }
+                }
             }
             return engine!!
         }
@@ -37,6 +42,7 @@ class AppApplication: Application() {
 
         } catch (e: IllegalStateException) {
             // koin is already initialized
+            Log.d("AppApplication", e.localizedMessage ?: "")
         }
     }
 }
