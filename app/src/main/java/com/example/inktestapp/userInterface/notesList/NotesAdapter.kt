@@ -3,17 +3,28 @@ package com.example.inktestapp.userInterface.notesList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.inktestapp.data.NotesEntity
 import com.example.inktestapp.databinding.NotesListRowBinding
+import com.example.inktestapp.utils.EditorUtils
 
 class NotesAdapter(
-    private val notesList: MutableList<NotesEntity>,
+    val notesList: MutableList<NotesEntity>,
     private val onNoteClicked: (NotesEntity) -> Unit
 ) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
 
     inner class NotesViewHolder(private val binding: NotesListRowBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(notesEntity: NotesEntity) {
+            val ctx = binding.root.context
+            val bitmap = EditorUtils.retrieveSavedBitMap(ctx, notesEntity.fileName)
+            binding.tvTitle.text = notesEntity.title
+            Glide.with(ctx)
+                .load(bitmap)
+                .into(binding.ivImage)
 
+            binding.root.setOnClickListener {
+                onNoteClicked.invoke(notesEntity)
+            }
         }
     }
 
@@ -29,5 +40,18 @@ class NotesAdapter(
 
     override fun getItemCount(): Int {
         return notesList.size
+    }
+
+    fun refresh(notes: MutableList<NotesEntity>) {
+        notesList.apply {
+            clear()
+            addAll(notes)
+        }
+        notifyDataSetChanged()
+    }
+
+    fun insertDeletedNote(position: Int, notesEntity: NotesEntity) {
+        notesList.add(position, notesEntity)
+        notifyItemInserted(position)
     }
 }

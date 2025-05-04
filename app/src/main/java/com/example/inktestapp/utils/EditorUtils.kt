@@ -17,6 +17,10 @@ object EditorUtils {
     @ColorInt
     private var backgroundColor = Color.WHITE
 
+    private val stopwords = setOf(
+        "the", "is", "at", "which", "on", "a", "an", "and", "in", "of", "to", "it", "that", "we", "for", "as", "with", "was", "were", "this", "be", "by", "are", "from"
+    )
+
     fun getBitmapFromEditorView(editorView: EditorView): Bitmap {
         val bitmap = createBitmap(editorView.width, editorView.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -47,6 +51,37 @@ object EditorUtils {
             Log.e("Editor", "Image file not found: ${imageFile.absolutePath}")
             return null
         }
+    }
+
+
+
+
+    // Splits text into sentences
+    private fun splitIntoSentences(text: String): List<String> {
+        return text.trim().split(Regex("(?<=[.!?])\\s+")).filter { it.isNotBlank() }
+    }
+
+    // Tokenizes and filters a sentence into meaningful words
+    private fun tokenize(sentence: String): List<String> {
+        return sentence.lowercase()
+            .split(Regex("\\W+"))
+            .filter { it.isNotBlank() && it !in stopwords }
+    }
+
+    // Main method to extract key sentences
+    fun extractKeySentences(text: String, topN: Int = 3): List<String> {
+        val sentences = splitIntoSentences(text)
+        val sentenceScores = sentences.map { sentence ->
+            val words = tokenize(sentence)
+            val score = words.groupingBy { it }.eachCount()
+                .filter { it.value > 1 }.values.sum() // You can tweak this scoring
+            sentence to score
+        }
+
+        return sentenceScores
+            .sortedByDescending { it.second }
+            .take(topN)
+            .map { it.first }
     }
 
 }

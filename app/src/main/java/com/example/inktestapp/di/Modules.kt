@@ -1,6 +1,6 @@
 package com.example.inktestapp.di
 
-import com.example.inktestapp.userInterface.createNote.CreateNoteViewModel
+import com.example.inktestapp.userInterface.createNote.AlterNoteViewModel
 import com.example.inktestapp.userInterface.editNote.EditNoteViewModel
 import com.example.inktestapp.userInterface.notesList.NotesListViewModel
 import com.example.inktestapp.userInterface.settings.SettingsViewModel
@@ -11,7 +11,7 @@ object Modules {
     val viewModelModule = module {
         single { NotesListViewModel() }
         single { SettingsViewModel() }
-        single { CreateNoteViewModel() }
+        single { AlterNoteViewModel() }
         single { EditNoteViewModel() }
     }
 }

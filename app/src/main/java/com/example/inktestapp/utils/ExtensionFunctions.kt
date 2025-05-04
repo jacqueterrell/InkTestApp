@@ -2,6 +2,7 @@ package com.example.inktestapp.utils
 
 import android.content.Context
 import android.net.Uri
+import android.view.View
 import com.myscript.iink.Editor
 import com.myscript.iink.MimeType
 import kotlinx.coroutines.Dispatchers
@@ -35,4 +36,22 @@ fun Editor.getWordCount(): Int {
 fun Editor.getText(): String {
     val text = this.export_(null, MimeType.TEXT).trim()
     return text
+}
+
+fun View.fadeIntoVisibility() {
+    alpha = 0f
+    visibility = View.VISIBLE
+    animate()
+        .alpha(1f)
+        .setDuration(500)
+        .setListener(null)
+}
+
+fun View.fadeOutToInvisible() {
+    animate()
+        .alpha(0f)
+        .setDuration(500)
+        .withEndAction {
+            visibility = View.INVISIBLE
+        }
 }

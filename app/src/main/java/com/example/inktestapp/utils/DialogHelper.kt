@@ -10,6 +10,7 @@ import com.example.inktestapp.R
 object DialogHelper {
 
     fun showSaveNoteDialog(
+        title: String,
         activity: Activity?,
         onSaveClicked: (title: String) -> Unit
     ) {
@@ -25,6 +26,10 @@ object DialogHelper {
                 val dialog = builder.create()
                 dialog.setCancelable(false)
                 dialog.show()
+
+                if (title.isNotBlank()) {
+                    saveNoteEditText.setText(title)
+                }
 
                 btnCancel.setOnClickListener {
                     dialog.cancel()
