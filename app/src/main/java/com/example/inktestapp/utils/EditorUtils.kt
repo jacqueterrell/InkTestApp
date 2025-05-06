@@ -61,19 +61,6 @@ object EditorUtils {
         }
     }
 
-    fun enhanceStrokeEligibility(editorData: EditorData?) {
-        editorData?.editor?.configuration?.setBoolean("text.guides.enable", true)
-        editorData?.editor?.configuration?.setBoolean("text.guides.text.fadeOut", true)
-        editorData?.editor?.configuration?.setBoolean("digitalInk.smoothing", true)
-        editorData?.editor?.configuration?.setNumber("renderer.resample.rate", 60.0)
-    }
-
-    fun resetStrokeEligibility(editorData: EditorData?) {
-        editorData?.editor?.configuration?.setBoolean("text.guides.enable", false)
-        editorData?.editor?.configuration?.setBoolean("text.guides.text.fadeOut", false)
-        editorData?.editor?.configuration?.setBoolean("digitalInk.smoothing", false)
-    }
-
     fun setExistingCachedNoteUI(editor: Editor?, notesEntity: NotesEntity, binding: CreateNoteLayoutBinding) {
         val inkColor = if (notesEntity.isDarkTheme) {
             binding.editorView.setBackgroundColor(Color.BLACK)
@@ -140,7 +127,7 @@ object EditorUtils {
     }
 
     // Main method to extract key sentences
-    fun extractKeySentences(text: String, topN: Int = 3): List<String> {
+    fun extractKeySentences(text: String, topN: Int = 5): List<String> {
         val sentences = splitIntoSentences(text)
         val sentenceScores = sentences.map { sentence ->
             val words = tokenize(sentence)

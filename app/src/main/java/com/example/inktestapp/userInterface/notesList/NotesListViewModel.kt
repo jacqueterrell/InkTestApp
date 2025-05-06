@@ -16,9 +16,9 @@ class NotesListViewModel: ViewModel() {
         dataBase.notesDao().insertAll(notesList)
     }
 
-    fun getNotesFlow(dataBase: AppDataBase, scope: CoroutineScope): StateFlow<MutableList<NotesEntity>> {
+    fun getNotesFlow(dataBase: AppDataBase, scope: CoroutineScope, sharingStarted: SharingStarted = SharingStarted.WhileSubscribed(5_000)): StateFlow<MutableList<NotesEntity>> {
         return dataBase.notesDao()
             .getNotesAsFlow()
-            .stateIn(scope, SharingStarted.WhileSubscribed(5_000), mutableListOf())
+            .stateIn(scope, sharingStarted, mutableListOf())
     }
 }

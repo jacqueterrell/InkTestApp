@@ -88,7 +88,11 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(project(":UIReferenceImplementation"))
 
+    testImplementation ("org.mockito:mockito-core:3.3.3")
+    testImplementation ("io.mockk:mockk:1.12.3")
     testImplementation(libs.junit)
+    testImplementation (libs.jetbrains.kotlinx.coroutines.test)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
