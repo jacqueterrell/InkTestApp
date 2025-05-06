@@ -1,0 +1,9 @@
+/*
+ * see https://developer.myscript.com/docs/interactive-ink/latest/reference/styling for styling reference
+ */
+
+.text {
+  font-size: 10;
+  line-height: 1.3;
+  color: #000000;
+}

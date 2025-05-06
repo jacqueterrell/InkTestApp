@@ -1,5 +1,6 @@
 package com.example.inktestapp.userInterface.notesList
 
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Color
@@ -21,6 +22,7 @@ import com.example.inktestapp.data.NotesEntity
 import com.example.inktestapp.databinding.NoteListLayoutBinding
 import com.example.inktestapp.userInterface.createNote.CreateNoteActivity
 import com.example.inktestapp.userInterface.editNote.EditNoteActivity
+import com.example.inktestapp.userInterface.settings.SettingsActivity
 import com.example.inktestapp.utils.DialogHelper
 import com.google.android.material.snackbar.Snackbar
 import com.myscript.iink.Editor
@@ -32,7 +34,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class NotesListActivity: AppCompatActivity() {
 
     private lateinit var binding: NoteListLayoutBinding
-    private lateinit var editor: Editor
     private var notesAdapter: NotesAdapter? = null
     private val viewModel: NotesListViewModel by viewModel()
     var notesList: MutableList<NotesEntity> = mutableListOf()
@@ -247,6 +248,10 @@ class NotesListActivity: AppCompatActivity() {
         }
         binding.fabAddNote.setOnClickListener {
             val intent = CreateNoteActivity.newIntent(this)
+            startActivity(intent)
+        }
+        binding.btnSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
     }

@@ -1,0 +1,7 @@
+@import "default";
+
+.raw-content {
+  -myscript-pen-color: #1E88E5; /* Blue ink */
+  -myscript-pen-width: 2.0;
+  -myscript-pen-width-adjustment: dynamic;
+}

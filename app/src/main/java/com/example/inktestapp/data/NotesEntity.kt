@@ -15,5 +15,7 @@ data class NotesEntity (
     var message: String = "",
     var fileName: String = "",
     var contextFileName: String  = "",
-    var listIndex: Int = 0
+    var listIndex: Int = 0,
+    var scalingValue: Float = 1.0f,
+    var isDarkTheme: Boolean = false
 ) : Parcelable

@@ -7,10 +7,18 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.util.Log
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import com.myscript.iink.uireferenceimplementation.EditorView
 import androidx.core.graphics.createBitmap
+import com.example.inktestapp.R
+import com.example.inktestapp.data.NotesEntity
+import com.example.inktestapp.databinding.CreateNoteLayoutBinding
+import com.myscript.iink.Editor
+import com.myscript.iink.PointerTool
+import com.myscript.iink.uireferenceimplementation.EditorData
 import java.io.File
 import java.io.FileOutputStream
+import androidx.core.graphics.toColorInt
 
 object EditorUtils {
 
@@ -53,8 +61,71 @@ object EditorUtils {
         }
     }
 
+    fun enhanceStrokeEligibility(editorData: EditorData?) {
+        editorData?.editor?.configuration?.setBoolean("text.guides.enable", true)
+        editorData?.editor?.configuration?.setBoolean("text.guides.text.fadeOut", true)
+        editorData?.editor?.configuration?.setBoolean("digitalInk.smoothing", true)
+        editorData?.editor?.configuration?.setNumber("renderer.resample.rate", 60.0)
+    }
 
+    fun resetStrokeEligibility(editorData: EditorData?) {
+        editorData?.editor?.configuration?.setBoolean("text.guides.enable", false)
+        editorData?.editor?.configuration?.setBoolean("text.guides.text.fadeOut", false)
+        editorData?.editor?.configuration?.setBoolean("digitalInk.smoothing", false)
+    }
 
+    fun setExistingCachedNoteUI(editor: Editor?, notesEntity: NotesEntity, binding: CreateNoteLayoutBinding) {
+        val inkColor = if (notesEntity.isDarkTheme) {
+            binding.editorView.setBackgroundColor(Color.BLACK)
+            binding.layoutNotesToText.setBackgroundColor(Color.BLACK)
+            binding.noteDivider.setBackgroundColor("#66ffffff".toColorInt())
+            binding.tvNotesToText.setTextColor(Color.WHITE)
+            binding.tvNotesToText.setHintTextColor("#66ffffff".toColorInt())
+            "#ffffff"
+        } else {
+            binding.editorView.setBackgroundColor(Color.WHITE)
+            binding.layoutNotesToText.setBackgroundColor(Color.WHITE)
+            binding.noteDivider.setBackgroundColor("#66000000".toColorInt())
+            binding.tvNotesToText.setTextColor(Color.BLACK)
+            binding.tvNotesToText.setHintTextColor("#66000000".toColorInt())
+            "#000000"
+        }
+        val linesColor = if (notesEntity.isDarkTheme) {
+            "#66ffffff"
+        } else {
+            "#66000000"
+        }
+        editor?.toolController?.setToolStyle(
+            PointerTool.PEN,"color: $inkColor; -myscript-pen-width: 1.0; -myscript-pen-pressure-sensitivity: ${notesEntity.scalingValue}; -myscript-guidelines-color: $linesColor"
+        )
+    }
+
+    fun setNewlyCreatedNoteUI(editor: Editor?, sharedPrefs: AppSharedPrefs, binding: CreateNoteLayoutBinding) {
+        val inkColor = if (sharedPrefs.hasEnabledDarkTheme) {
+            binding.editorView.setBackgroundColor(Color.BLACK)
+            binding.layoutNotesToText.setBackgroundColor(Color.BLACK)
+            binding.noteDivider.setBackgroundColor("#66ffffff".toColorInt())
+            binding.tvNotesToText.setTextColor(Color.WHITE)
+            binding.tvNotesToText.setHintTextColor("#66ffffff".toColorInt())
+            "#ffffff"
+        } else {
+            binding.editorView.setBackgroundColor(Color.WHITE)
+            binding.layoutNotesToText.setBackgroundColor(Color.WHITE)
+            binding.noteDivider.setBackgroundColor("#66000000".toColorInt())
+            binding.tvNotesToText.setTextColor(Color.BLACK)
+            binding.tvNotesToText.setHintTextColor(Color.WHITE)
+            binding.tvNotesToText.setHintTextColor("#66000000".toColorInt())
+            "#000000"
+        }
+        val linesColor = if (sharedPrefs.hasEnabledDarkTheme) {
+            "#ffffff"
+        } else {
+            "#66000000"
+        }
+        editor?.toolController?.setToolStyle(
+            PointerTool.PEN,"color: $inkColor; -myscript-pen-width: 1.0; -myscript-pen-pressure-sensitivity: ${sharedPrefs.penSensitivityValue}; -myscript-guidelines-color: $linesColor"
+        )
+    }
 
     // Splits text into sentences
     private fun splitIntoSentences(text: String): List<String> {

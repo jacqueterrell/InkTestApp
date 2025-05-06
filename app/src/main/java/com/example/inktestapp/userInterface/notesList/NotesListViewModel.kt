@@ -1,7 +1,6 @@
 package com.example.inktestapp.userInterface.notesList
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.inktestapp.data.AppDataBase
 import com.example.inktestapp.data.NotesEntity
 import kotlinx.coroutines.CoroutineScope

@@ -1,15 +1,21 @@
 package com.example.inktestapp.userInterface.createNote
 
+import android.annotation.SuppressLint
+import android.app.Application
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.example.inktestapp.R
 import com.example.inktestapp.data.NotesDbHelper
 import com.example.inktestapp.data.NotesEntity
 import com.example.inktestapp.databinding.CreateNoteLayoutBinding
 import com.example.inktestapp.userInterface.AppApplication
+import com.example.inktestapp.utils.AppSharedPrefs
 import com.example.inktestapp.utils.DialogHelper
 import com.example.inktestapp.utils.EditorUtils
 import com.example.inktestapp.utils.fadeIntoVisibility
@@ -29,10 +35,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.java.KoinJavaComponent
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.nio.charset.StandardCharsets
 
-abstract class AlterNoteBaseActivity: AppCompatActivity() {
+abstract class AlterNoteBaseActivity : AppCompatActivity() {
 
     abstract fun isEditingNote(): Boolean
     abstract fun getTag(): String
@@ -40,6 +49,8 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
     abstract fun getEditingNoteEntity(): NotesEntity?
 
     private lateinit var binding: CreateNoteLayoutBinding
+    private var sharedPrefs: AppSharedPrefs = KoinJavaComponent.get(AppSharedPrefs::class.java)
+
     private val viewModel: AlterNoteViewModel by viewModel()
     private var editor: Editor? = null
     private var editorData: EditorData? = null
@@ -64,6 +75,16 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
         }
     }
 
+    private fun provideEditorTheme(application: Application): String {
+        application.resources.openRawResource(R.raw.theme).use { input ->
+            ByteArrayOutputStream().use { output ->
+                input.copyTo(output)
+                return output.toString(StandardCharsets.UTF_8.name())
+            }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     private fun setUpUI() {
         binding.tvToolbarTitle.text = getNoteTitle()
         val engine = AppApplication.getEngine()
@@ -85,9 +106,36 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
         editor = editorData?.editor
         binding.editorView.editor = editor
 
-        editor?.addListener(object: IEditorListener {
-            override fun partChanging(p0: Editor, p1: ContentPart?, p2: ContentPart?) {
+        setCachedUIValues()
 
+        binding.editorView.setOnHoverListener { view, motionEvent ->
+            if (motionEvent.getToolType(0) == MotionEvent.TOOL_TYPE_STYLUS) {
+                val usingEraser = binding.switchErasePen.isChecked
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_HOVER_MOVE -> binding.cursorOverlay.updateCursor(
+                        motionEvent.x,
+                        motionEvent.y,
+                        usingEraser
+                    )
+
+                    MotionEvent.ACTION_HOVER_EXIT -> binding.cursorOverlay.hideCursor()
+                }
+            } else if (motionEvent.getToolType(0) == MotionEvent.TOOL_TYPE_ERASER) {
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_HOVER_MOVE -> binding.cursorOverlay.updateCursor(
+                        motionEvent.x,
+                        motionEvent.y,
+                        true
+                    )
+
+                    MotionEvent.ACTION_HOVER_EXIT -> binding.cursorOverlay.hideCursor()
+                }
+            }
+            false
+        }
+
+        editor?.addListener(object : IEditorListener {
+            override fun partChanging(p0: Editor, p1: ContentPart?, p2: ContentPart?) {
             }
 
             override fun partChanged(p0: Editor) {
@@ -116,6 +164,7 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
         })
 
         setInputMode()
+
         val ts = System.currentTimeMillis()
 
         val contentFileName = if (isEditingNote()) {
@@ -149,7 +198,18 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
                 "Failed to open package \"$contentFileName\"", e
             )
         }
+        viewModel.hideSummaryScreen.observe(this) {
+            binding.layoutSummaryContainer.fadeOutToInvisible()
+        }
+        binding.switchSmoothPen.isChecked = sharedPrefs.hasEnabledSmoothPen
+    }
 
+    private fun setCachedUIValues() {
+        if (isEditingNote()) {
+            EditorUtils.setExistingCachedNoteUI(editor, getEditingNoteEntity()!!, binding)
+        } else {
+            EditorUtils.setNewlyCreatedNoteUI(editor,sharedPrefs, binding)
+        }
     }
 
     private fun setOnClickListeners() {
@@ -170,7 +230,7 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
             } else {
                 ""
             }
-            DialogHelper.showSaveNoteDialog(title,this, { noteTitle ->
+            DialogHelper.showSaveNoteDialog(title, this, { noteTitle ->
                 lifecycleScope.launch(Dispatchers.IO) {
 
                     if (isEditingNote()) {
@@ -180,8 +240,15 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
                         }
 
                         val bitmap = EditorUtils.getBitmapFromEditorView(binding.editorView)
-                        EditorUtils.saveBitMap(this@AlterNoteBaseActivity, bitmap, getEditingNoteEntity()!!.fileName)
-                        NotesDbHelper.updateNote(this@AlterNoteBaseActivity, getEditingNoteEntity()!!)
+                        EditorUtils.saveBitMap(
+                            this@AlterNoteBaseActivity,
+                            bitmap,
+                            getEditingNoteEntity()!!.fileName
+                        )
+                        NotesDbHelper.updateNote(
+                            this@AlterNoteBaseActivity,
+                            getEditingNoteEntity()!!
+                        )
 
                         contentPackage?.save()
                     } else {
@@ -195,7 +262,9 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
                             message = viewModel.text,
                             fileName = fileName,
                             contextFileName = viewModel.contentFileName,
-                            listIndex = newIndex
+                            listIndex = newIndex,
+                            isDarkTheme = sharedPrefs.hasEnabledDarkTheme,
+                            scalingValue = sharedPrefs.penSensitivityValue
                         )
                         val bitmap = EditorUtils.getBitmapFromEditorView(binding.editorView)
                         EditorUtils.saveBitMap(this@AlterNoteBaseActivity, bitmap, fileName)
@@ -207,20 +276,31 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         onBackPressed()
                     }
-                  //  Log.i(getTag(), "bitmap saved to $fileName")
+                    //  Log.i(getTag(), "bitmap saved to $fileName")
                 }
             })
         }
         binding.btnShowSummary.setOnClickListener {
             binding.layoutOptions.fadeOutToInvisible()
+            val summary = EditorUtils.extractKeySentences(viewModel.text.replace("\n", " "))
+            viewModel.summaryTextList.postValue(summary)
+            binding.layoutSummaryContainer.fadeIntoVisibility()
+            Log.i(getTag(), "Summary")
         }
         binding.btnSearch.setOnClickListener {
             binding.layoutOptions.fadeOutToInvisible()
         }
+        binding.switchErasePen.setOnCheckedChangeListener { compoundButton, isChecked ->
+            if (isChecked) {
+                setInputMode(InputController.INPUT_MODE_ERASER)
+            } else {
+                setInputMode(InputController.INPUT_MODE_AUTO)
+            }
+        }
     }
 
-    private fun setInputMode() {
-        editorData?.inputController?.inputMode = InputController.INPUT_MODE_FORCE_PEN
+    private fun setInputMode(inputMode: Int = InputController.INPUT_MODE_AUTO) {
+        editorData?.inputController?.inputMode = inputMode
     }
 
     override fun onDestroy() {
@@ -255,7 +335,9 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
             binding.btnRedo.isEnabled = canRedo
             binding.btnClear.isEnabled = contentPart != null
             val wordCount = editor.getWordCount()
-            val text = editor.getText()
+            val text = editor.getText().replace("\n", " ")
+            binding.tvNotesToText.text = text
+
             viewModel.text = text
             if (wordCount > 0) {
                 binding.btnMore.visibility = View.VISIBLE
@@ -265,5 +347,15 @@ abstract class AlterNoteBaseActivity: AppCompatActivity() {
             Log.i(getTag(), "word count = $wordCount")
             Log.i(getTag(), "word text = $text")
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (binding.layoutSummaryContainer.isVisible) {
+                binding.layoutSummaryContainer.fadeOutToInvisible()
+                return false
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }

@@ -38,6 +38,26 @@ fun Editor.getText(): String {
     return text
 }
 
+fun Editor.highlightSearchedWord(query: String) {
+    val rootBlock = this.rootBlock
+
+    if (rootBlock != null && rootBlock.children != null) {
+        for (i in 0 until rootBlock.children.size) {
+            val child = rootBlock.children[i]
+
+            if (this.getSupportedExportMimeTypes(child).contains(MimeType.TEXT)) {
+                val blockText = this.export_(child, MimeType.TEXT) as? String
+
+                if (blockText != null && blockText.contains(query, ignoreCase = true)) {
+                    // Select this block to visually highlight it
+                    this.setSelection(child)
+                    break // highlight first match only
+                }
+            }
+        }
+    }
+}
+
 fun View.fadeIntoVisibility() {
     alpha = 0f
     visibility = View.VISIBLE
@@ -53,5 +73,14 @@ fun View.fadeOutToInvisible() {
         .setDuration(500)
         .withEndAction {
             visibility = View.INVISIBLE
+        }
+}
+
+fun View.fadeOutToGone() {
+    animate()
+        .alpha(0f)
+        .setDuration(500)
+        .withEndAction {
+            visibility = View.GONE
         }
 }

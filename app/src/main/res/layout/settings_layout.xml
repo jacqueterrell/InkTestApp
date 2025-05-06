@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layout_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:orientation="horizontal"
+                android:background="@color/black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_toolbar_title"
+                    style="@style/AppToolBar"
+                    android:layout_width="0dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:maxWidth="180dp"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:text="Settings" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_ink_enhancement"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:alpha="0.6"
+                    android:src="@drawable/ic_ink_highlighter"
+                    app:tint="@color/black" />
+
+                <TextView
+                    android:id="@+id/tv_ink_enhancement_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="40dp"
+                    android:layout_toStartOf="@+id/switch_ink_enhancement"
+                    android:layout_toEndOf="@id/iv_ink_enhancement"
+                    android:padding="16dp"
+                    android:text="Ink Enhancement"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id = "@+id/switch_ink_enhancement"
+                    android:layout_width = "wrap_content"
+                    android:layout_height = "wrap_content"
+                    android:layout_centerVertical = "true"
+                    android:layout_alignParentEnd = "true"
+                    android:padding = "16dp"
+                    android:checked = "false"
+                    app:switchMinWidth = "50dp"
+                    />
+
+
+                <TextView
+                    android:id="@+id/tv_ink_enhancement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_ink_enhancement_title"
+                    android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@id/iv_ink_enhancement"
+                    android:textColor="@color/black"
+                    android:textStyle="italic"
+                    android:layout_marginEnd="85dp"
+                    android:text="Improves visual quality of handwritten strokes."
+                    />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width = "match_parent"
+                android:layout_height = "1dp"
+                android:background = "@color/black"
+                android:layout_marginTop="16dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_theme"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:alpha="0.6"
+                    android:src="@drawable/ic_dark_mode"
+                    app:tint="@color/black" />
+
+                <TextView
+                    android:id="@+id/tv_theme_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="40dp"
+                    android:layout_toStartOf="@+id/switch_theme"
+                    android:layout_toEndOf="@id/iv_theme"
+                    android:padding="16dp"
+                    android:text="Dark Note Theme"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id = "@+id/switch_theme"
+                    android:layout_width = "wrap_content"
+                    android:layout_height = "wrap_content"
+                    android:layout_centerVertical = "true"
+                    android:layout_alignParentEnd = "true"
+                    android:padding = "16dp"
+                    android:checked = "false"
+                    app:switchMinWidth = "50dp"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_theme_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_theme_title"
+                    android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@id/iv_theme"
+                    android:textColor="@color/black"
+                    android:textStyle="italic"
+                    android:layout_marginEnd="85dp"
+                    android:text="Updates the note screen to either display a dark or light theme. Notes already saved are not affected by this setting."
+                    />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width = "match_parent"
+                android:layout_height = "1dp"
+                android:background = "@color/black"
+                android:layout_marginTop="16dp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_sensitivity"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:alpha="0.6"
+                    android:src="@drawable/ic_stylus"
+                    app:tint="@color/black" />
+
+                <TextView
+                    android:id="@+id/tv_sensitivity_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="40dp"
+                    android:layout_toStartOf="@+id/switch_sensitivity"
+                    android:layout_toEndOf="@id/iv_sensitivity"
+                    android:padding="16dp"
+                    android:text="Stylus Sensitivity"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id = "@+id/switch_sensitivity"
+                    android:layout_width = "wrap_content"
+                    android:layout_height = "wrap_content"
+                    android:layout_centerVertical = "true"
+                    android:layout_alignParentEnd = "true"
+                    android:visibility="invisible"
+                    android:padding = "16dp"
+                    android:checked = "false"
+                    app:switchMinWidth = "50dp"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_sensitivity_body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_sensitivity_title"
+                    android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@id/iv_sensitivity"
+                    android:textColor="@color/black"
+                    android:textStyle="italic"
+                    android:layout_marginEnd="85dp"
+                    android:text="Updates the pressure sensitivity of strokes"
+                    />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_sensitivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_sensitivity_body"
+                    android:valueFrom="0.0"
+                    android:valueTo="3.0"
+                    android:stepSize="0.5"
+                    android:value="1.0"
+                    app:thumbColor="@color/teal_700"
+                    app:trackColorActive="@color/teal_700"
+                    />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width = "match_parent"
+                android:layout_height = "1dp"
+                android:background = "@color/black"
+                android:layout_marginTop="16dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
